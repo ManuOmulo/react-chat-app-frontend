@@ -12,7 +12,7 @@ const ChatTemplate = (props) => {
         />
         <button>Send Message</button>
       </form>
-
+      <button onClick={props.handleSendLocation}>Send Location</button>
       <div>
         {props.chats}
       </div>

@@ -4,14 +4,12 @@ import moment from "moment"
 
 import "./App.scss"
 import ChatTemplate from "./Templates/chats"
-import LocationTemplate from "./Templates/location"
 
 const socket = io("http://localhost:4000")
 
 const App = () => {
   const [messages, setMessages] = useState([])
   const [state, setState] = useState("")
-  const [myLocation, setMyLocation] = useState([])
 
   useEffect(() => {
     socket.on("message", (newMessage) => {
@@ -21,7 +19,7 @@ const App = () => {
 
   useEffect(() => {
     socket.on("locationMessage", (position) => {
-      setMyLocation([...myLocation, position])
+      setMessages([...messages, position])
     })
   })
 
@@ -50,17 +48,27 @@ const App = () => {
     })
   }
 
-  const chats = messages.map((message, index) => (
-    <div key={index}>
-      <p>{moment(message.createdAt).format("h:mm a")} - {message.text}</p>
-    </div>
-  ))
-
-  const currentLocation =  myLocation.map((location, index) => (
-    <div key={index}>
-      <p>{moment(location.createdAt).format("h:mm a")} - <a href={location.url} target="blank">My Location</a></p>
-    </div>
-  ))
+  const chats = messages.map((message, index) => {
+    if (message.text) {
+      return (
+        <div key={index}>
+          <p>{moment(message.createdAt).format("h:mm a")} - {message.text}</p>
+        </div>
+      )
+    } else if (message.url) {  
+      return (
+        <div key={index}>
+        <p>{moment(message.createdAt).format("h:mm a")} - {<a href={message.url}>My Location</a>}</p>
+      </div>
+      )
+    } else {
+      return (
+        <div key={index}>
+          <p>{moment(message.createdAt).format("h:mm a")} - </p>
+        </div>
+      )
+    }
+  })
 
 
   return (
@@ -68,11 +76,8 @@ const App = () => {
       <ChatTemplate
         handleChange={handleChange}
         handleMessageSubmit={handleMessageSubmit}
-        chats={chats}
-      />
-      <LocationTemplate
         handleSendLocation={handleSendLocation}
-        currentLocation={currentLocation}
+        chats={chats}
       />
     </div>
   )
