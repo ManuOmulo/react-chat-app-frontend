@@ -55,7 +55,7 @@ const App = () => {
           <p>{moment(message.createdAt).format("h:mm a")} - {message.text}</p>
         </div>
       )
-    } else if (message.url) {  
+    } else if (message.url) {
       return (
         <div key={index}>
         <p>{moment(message.createdAt).format("h:mm a")} - {<a href={message.url}>My Location</a>}</p>
